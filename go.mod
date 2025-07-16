@@ -5,7 +5,8 @@ go 1.24.4
 require (
 	github.com/cohesion-org/deepseek-go v1.3.2
 	github.com/google/go-github/v62 v62.0.0
-	github.com/yeeaiclub/a2a-go v0.2.1
+	github.com/yeeaiclub/a2a-go v0.2.2
+	github.com/yumosx/got v1.2.5
 	golang.org/x/oauth2 v0.30.0
 )
 

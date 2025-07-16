@@ -1,4 +1,4 @@
-package main
+package toolset
 
 import (
 	"context"
@@ -313,12 +313,10 @@ func (g *GitHubToolset) SearchRepositories(query string, sort *string, limit *in
 }
 
 // GetTools returns the available tools for OpenAI function calling
-func (g *GitHubToolset) GetTools() map[string]Function {
-	return map[string]Function{
+func (g *GitHubToolset) GetTools() map[string]types.Function {
+	return map[string]types.Function{
 		"get_user_repositories": &GetUserRepositoriesTool{g},
 		"get_recent_commits":    &GetRecentCommitsTool{g},
 		"search_repositories":   &SearchRepositoriesTool{g},
 	}
 }
-
-// Tool wrappers for go-openai compatibility

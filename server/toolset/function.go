@@ -1,4 +1,4 @@
-package main
+package toolset
 
 import (
 	"fmt"
@@ -6,16 +6,11 @@ import (
 	"github.com/cohesion-org/deepseek-go"
 )
 
-type Function interface {
-	OpenAIFunctionDefinition() deepseek.Function
-	Call(args map[string]interface{}) interface{}
-}
-
 type GetUserRepositoriesTool struct {
 	toolset *GitHubToolset
 }
 
-func (t *GetUserRepositoriesTool) OpenAIFunctionDefinition() deepseek.Function {
+func (t *GetUserRepositoriesTool) FunctionDefinition() deepseek.Function {
 	return deepseek.Function{
 		Name:        "get_user_repositories",
 		Description: "Get user's repository list with filtering by recent update time",
@@ -65,7 +60,7 @@ type GetRecentCommitsTool struct {
 	toolset *GitHubToolset
 }
 
-func (t *GetRecentCommitsTool) OpenAIFunctionDefinition() deepseek.Function {
+func (t *GetRecentCommitsTool) FunctionDefinition() deepseek.Function {
 	return deepseek.Function{
 		Name:        "get_recent_commits",
 		Description: "Get recent commit records for a specific repository",
@@ -116,7 +111,7 @@ type SearchRepositoriesTool struct {
 	toolset *GitHubToolset
 }
 
-func (t *SearchRepositoriesTool) OpenAIFunctionDefinition() deepseek.Function {
+func (t *SearchRepositoriesTool) FunctionDefinition() deepseek.Function {
 	return deepseek.Function{
 		Name:        "search_repositories",
 		Description: "Search repositories with recent activity",

@@ -1,4 +1,4 @@
-package main
+package toolset
 
 import (
 	"context"
@@ -13,19 +13,20 @@ import (
 	"github.com/yeeaiclub/a2a-go/sdk/server/tasks"
 	"github.com/yeeaiclub/a2a-go/sdk/server/tasks/updater"
 	"github.com/yeeaiclub/a2a-go/sdk/types"
+	itypes "github.com/yeeaiclub/github-a2a/types"
 )
 
 type DeepSeekExecutor struct {
 	store        tasks.TaskStore
 	card         *types.AgentCard
-	tools        map[string]Function
+	tools        map[string]itypes.Function
 	apiKey       string
 	systemPrompt string
 	client       *deepseek.Client
 	model        string
 }
 
-func NewExecutor(store tasks.TaskStore, card *types.AgentCard, tools map[string]Function, apiKey string, systemPrompt string) *DeepSeekExecutor {
+func NewExecutor(store tasks.TaskStore, card *types.AgentCard, tools map[string]itypes.Function, apiKey string, systemPrompt string) *DeepSeekExecutor {
 	client := deepseek.NewClient(apiKey)
 	log.Printf("Initializing DeepSeekExecutor")
 
@@ -79,7 +80,7 @@ func (e *DeepSeekExecutor) processRequest(ctx context.Context, messageText strin
 	for _, function := range e.tools {
 		tools = append(tools, deepseek.Tool{
 			Type:     "function",
-			Function: function.OpenAIFunctionDefinition(),
+			Function: function.FunctionDefinition(),
 		})
 	}
 
@@ -119,7 +120,7 @@ func (e *DeepSeekExecutor) processRequest(ctx context.Context, messageText strin
 					&types.TextPart{Kind: "text", Text: message.Content},
 				}
 				taskUpdater.AddArtifact(agentParts)
-				taskUpdater.Complete(updater.WithFinal(true))
+				taskUpdater.Complete()
 			}
 			break
 		}
@@ -162,12 +163,12 @@ func (e *DeepSeekExecutor) processRequest(ctx context.Context, messageText strin
 		agentMessage := taskUpdater.NewAgentMessage([]types.Part{
 			&types.TextPart{Kind: "text", Text: "Processing tool calls..."},
 		})
-		taskUpdater.UpdateStatus(types.WORKING, updater.WithMessage(&agentMessage))
+		taskUpdater.StartWork(updater.WithMessage(agentMessage))
 	}
 
 	if iteration >= maxIterations {
 		parts := []types.Part{&types.TextPart{Kind: "text", Text: "Sorry, the request has exceeded the maximum number of iterations."}}
-		taskUpdater.Complete(updater.WithFinal(true), updater.WithMessage(&types.Message{
+		taskUpdater.Complete(updater.WithMessage(&types.Message{
 			Parts: parts,
 		}))
 	}

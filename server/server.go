@@ -9,6 +9,7 @@ import (
 	"github.com/yeeaiclub/a2a-go/sdk/server/handler"
 	"github.com/yeeaiclub/a2a-go/sdk/server/tasks"
 	"github.com/yeeaiclub/a2a-go/sdk/types"
+	"github.com/yeeaiclub/github-a2a/server/toolset"
 )
 
 var AgentCard = types.AgentCard{
@@ -26,7 +27,7 @@ var store = tasks.NewInMemoryTaskStore()
 
 func main() {
 	// Create agent configuration
-	agentConfig := CreateAgent()
+	agentConfig := GithubAgent()
 
 	// Get API key from environment
 	apiKey := os.Getenv("DEEPSEEK_API_KEY")
@@ -38,7 +39,7 @@ func main() {
 
 	defaultHandler := handler.NewDefaultHandler(
 		store,
-		NewExecutor(store, &AgentCard, agentConfig.Tools, apiKey, agentConfig.SystemPrompt),
+		toolset.NewExecutor(store, &AgentCard, agentConfig.Tools, apiKey, agentConfig.SystemPrompt),
 		handler.WithQueueManger(NewQueueManager()),
 	)
 
